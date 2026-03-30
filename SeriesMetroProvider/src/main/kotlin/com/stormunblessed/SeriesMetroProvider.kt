@@ -62,7 +62,7 @@ class SeriesMetroProvider: MainAPI() {
             }
             items.add(HomePageList(name, home))
         }
-        return HomePageResponse(items)
+        return newHomePageResponse(items)
     }
 
     override suspend fun search(query: String): List<SearchResponse> {
@@ -102,7 +102,7 @@ class SeriesMetroProvider: MainAPI() {
             it.attr("data-season")
         }
         val episodes = ArrayList<Episode>()
-        val episs = dataseason.apmap { season ->
+        val episs = dataseason.amap { season ->
             val response = app.post("$mainUrl/wp-admin/admin-ajax.php", data =
             mapOf(
                 "action" to "action_select_season",
@@ -122,7 +122,7 @@ class SeriesMetroProvider: MainAPI() {
                 val isValid = seasonid.size == 2
                 val episode = if (isValid) seasonid.getOrNull(1) else null
                 val seasonint = if (isValid) seasonid.getOrNull(0) else null
-                episodes.add(Episode(
+                episodes.add(newEpisode(
                     link,
                     season = seasonint,
                     episode = episode
@@ -171,7 +171,7 @@ class SeriesMetroProvider: MainAPI() {
         val soup = app.get(data).document
         val dataterm = soup.select(".video.aa-tb.hdd.anm-a.on").attr("data-term")
         val dataop = soup.select("ul.aa-tbs-video li a").map { it.attr("data-opt") }
-        dataop.apmap { serverid ->
+        dataop.amap { serverid ->
             val response = app.post("$mainUrl/wp-admin/admin-ajax.php",
                 headers = mapOf(
                     "User-Agent" to USER_AGENT,
