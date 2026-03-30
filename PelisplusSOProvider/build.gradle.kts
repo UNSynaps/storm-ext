@@ -24,8 +24,3 @@ cloudstream {
 
     iconUrl = "https://pelisplusgo.vip/favicon.png"
 }
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile> {
-    compilerOptions {
-        freeCompilerArgs.add("-Xsuppress-warnings")
-    }
-}
