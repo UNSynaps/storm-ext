@@ -47,7 +47,7 @@ class MundoDonghuaProvider : MainAPI() {
                 })
         )
 
-        urls.apmap { (url, name) ->
+        urls.amap { (url, name) ->
             val home = app.get(url, timeout = 120).document.select(".col-xs-4").map {
                 val title = it.selectFirst(".fs-14")?.text() ?: ""
                 val poster = it.selectFirst(".fit-1 img")?.attr("src") ?: ""
@@ -68,7 +68,7 @@ class MundoDonghuaProvider : MainAPI() {
         }
 
         if (items.size <= 0) throw ErrorLoadingException()
-        return HomePageResponse(items)
+        return newHomePageResponse(items)
     }
 
     override suspend fun search(query: String): List<SearchResponse> {
@@ -110,7 +110,7 @@ class MundoDonghuaProvider : MainAPI() {
             val link = it.attr("href")
             val epnum = epNumRegex.find(link)?.destructured?.component1()
             newEpisodes.add(
-                Episode(
+                newEpisode(
                     fixUrl(link),
                     episode = epnum.toString().toIntOrNull()
                 )
@@ -121,7 +121,7 @@ class MundoDonghuaProvider : MainAPI() {
             if (href?.contains(slug) == true) {
                 val epnum = epNumRegex.find(href)?.destructured?.component1()
                 newEpisodes.add(
-                    Episode(
+                    newEpisode(
                         fixUrl(href),
                         episode = epnum.toString().toIntOrNull()
                     )
@@ -170,14 +170,14 @@ class MundoDonghuaProvider : MainAPI() {
             "Sec-Fetch-Site" to "same-origin",
             "TE" to "trailers"
         )
-        app.get(data).document.select("script").apmap { script ->
+        app.get(data).document.select("script").amap { script ->
             if (script.data().contains("eval(function(p,a,c,k,e")) {
                 val packedRegex = Regex("eval\\(function\\(p,a,c,k,e,.*\\)\\)")
                 packedRegex.findAll(script.data()).map {
                     it.value
-                }.toList().apmap {
+                }.toList().amap {
                     val unpack = getAndUnpack(it).replace("diasfem","embedsito")
-                    fetchUrls(unpack).apmap { url ->
+                    fetchUrls(unpack).amap { url ->
                         val newUrl = url.replace("https://sbbrisk.com","https://watchsb.com")
                         loadExtractor(newUrl, data, subtitleCallback, callback)
                     }
