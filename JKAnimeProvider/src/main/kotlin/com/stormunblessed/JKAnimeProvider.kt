@@ -70,7 +70,7 @@ class JKAnimeProvider : MainAPI() {
                     }
                 }, isHorizontal)
         )
-        urls.apmap { (url, name) ->
+        urls.amap { (url, name) ->
             val soup = app.get(url).document
             val home = soup.select(".g-0").map {
                 val title = it.selectFirst("h5 a")?.text()
@@ -91,7 +91,7 @@ class JKAnimeProvider : MainAPI() {
         }
 
         if (items.size <= 0) throw ErrorLoadingException()
-        return HomePageResponse(items)
+        return newHomePageResponse(items)
     }
 
     /* data class MainSearch(
@@ -126,7 +126,7 @@ class JKAnimeProvider : MainAPI() {
             "$mainUrl/buscar/$query/3/"
         )
         val search = ArrayList<SearchResponse>()
-        urls.apmap { ss ->
+        urls.amap { ss ->
             val doc = app.get(ss).document
             doc.select("div.row div.anime__item").mapNotNull {
                 val title = it.selectFirst(".title")?.text() ?: ""
@@ -165,14 +165,14 @@ class JKAnimeProvider : MainAPI() {
         val animeID = doc.selectFirst("div.ml-2")?.attr("data-anime")?.toInt()
         val episodes = ArrayList<Episode>()
         val pags = doc.select("a.numbers").map { it.attr("href").substringAfter("#pag") }
-        pags.apmap { pagnum ->
+        pags.amap { pagnum ->
             val res = app.get("$mainUrl/ajax/pagination_episodes/$animeID/$pagnum/").text
             val json = parseJson<ArrayList<EpsInfo>>(res)
-            json.apmap { info ->
+            json.amap { info ->
                 val imagetest = !info.image.isNullOrBlank()
                 val image = if (imagetest) "https://cdn.jkdesu.com/assets/images/animes/video/image_thumb/${info.image}" else null
                 val link = "${url.removeSuffix("/")}/${info.number}"
-                val ep = Episode(
+                val ep = newEpisode(
                     link,
                     posterUrl = image
                 )
@@ -236,13 +236,13 @@ class JKAnimeProvider : MainAPI() {
         callback: (ExtractorLink) -> Unit
     ): Boolean {
 
-        app.get(data).document.select("script").apmap { script ->
+        app.get(data).document.select("script").amap { script ->
 
             if (script.data().contains(Regex("slug|remote"))) {
                 val serversRegex = Regex("\\[\\{.*?\"remote\".*?\"\\}\\]")
                 val servers = serversRegex.findAll(script.data()).map { it.value }.toList().first()
                 val serJson = parseJson<ArrayList<ServersEncoded>>(servers)
-                serJson.apmap {
+                serJson.amap {
                     val encodedurl = it.remote
                     val urlDecoded = base64Decode(encodedurl)
                     loadExtractor(urlDecoded, mainUrl, subtitleCallback, callback)
@@ -266,7 +266,7 @@ class JKAnimeProvider : MainAPI() {
                         .replace("/um2.php?","$mainUrl/um2.php?")
                         .replace("/um.php?","$mainUrl/um.php?")
                         .replace("=\"player_conte\" src=", "")
-                }.apmap { link ->
+                }.amap { link ->
                     fetchUrls(link).forEach {links ->
                         loadExtractor(links, data, subtitleCallback, callback)
                         if (links.contains("um2.php")) {
@@ -294,7 +294,7 @@ class JKAnimeProvider : MainAPI() {
                                 ),
                                 data = mapOf(Pair("data", gsplaykey)),
                                 allowRedirects = false
-                            ).okhttpResponse.headers.values("location").apmap { loc ->
+                            ).okhttpResponse.headers.values("location").amap { loc ->
                                 val postkey = loc.replace("/gsplay/player.html#", "")
                                 val nozomitext = app.post(
                                     "$mainUrl/gsplay/api.php",
@@ -358,7 +358,7 @@ class JKAnimeProvider : MainAPI() {
                                 links,
                                 referer = data,
                                 allowRedirects = false
-                            ).okhttpResponse.headers.values("location").apmap { xtremeurl ->
+                            ).okhttpResponse.headers.values("location").amap { xtremeurl ->
                                 val namex = "Xtreme S"
                                 streamClean(
                                     namex,
