@@ -25,3 +25,8 @@ cloudstream {
 
     iconUrl = "https://www.google.com/s2/favicons?domain=mundodonghua.com&sz=%size%"
 }
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile> {
+    compilerOptions {
+        freeCompilerArgs.add("-Xsuppress-warnings")
+    }
+}
