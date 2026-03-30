@@ -25,7 +25,7 @@ class PelispediaProvider:MainAPI() {
             Pair("Películas","$mainUrl/cartelera-peliculas/"),
             Pair("Series","$mainUrl/cartelera-series/"),
         )
-        urls.apmap { (name, url) ->
+        urls.amap { (name, url) ->
             val doc = app.get(url).document
             val home =  doc.select("section.movies article").map {
                 val title = it.selectFirst("h2.entry-title")?.text() ?: ""
@@ -44,7 +44,7 @@ class PelispediaProvider:MainAPI() {
             items.add(HomePageList(name, home))
         }
 
-        return HomePageResponse(items)
+        return newHomePageResponse(items)
     }
 
     override suspend fun search(query: String): List<SearchResponse> {
@@ -82,7 +82,7 @@ class PelispediaProvider:MainAPI() {
             Pair(seriesid, dataseason)
         }
         val epi = ArrayList<Episode>()
-        seasonsdoc.apmap {(serieid, data) ->
+        seasonsdoc.amap {(serieid, data) ->
             val seasonsrequest = app.post("https://pelispedia.is/wp-admin/admin-ajax.php",
                 data = mapOf(
                     "action" to "action_select_season",
@@ -101,7 +101,7 @@ class PelispediaProvider:MainAPI() {
                 val isValid = seasonid.size == 2
                 val episode = if (isValid) seasonid.getOrNull(1) else null
                 val season = if (isValid) seasonid.getOrNull(0) else null
-                epi.add(Episode(
+                epi.add(newEpisode(
                     href,
                     null,
                     season,
@@ -155,7 +155,7 @@ class PelispediaProvider:MainAPI() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ): Boolean {
-        app.get(data).document.select(".player iframe").apmap {
+        app.get(data).document.select(".player iframe").amap {
             val trembedlink = it.attr("data-src")
             val tremrequest = app.get(trembedlink).document
             val link = tremrequest.selectFirst("div.Video iframe")!!.attr("src")
