@@ -43,6 +43,10 @@ subprojects {
     }
 
     android {
+        namespace = "com.storm.plugin"
+        
+        // (aquí abajo seguirá lo que ya estaba, como compileSdkVersion, etc.)
+
         compileSdkVersion(35)
 
         defaultConfig {
