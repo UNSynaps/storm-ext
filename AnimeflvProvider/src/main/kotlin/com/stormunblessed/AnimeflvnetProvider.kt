@@ -105,6 +105,7 @@ class AnimeflvnetProvider : MainAPI() {
             }
         }
     }
+    
     override suspend fun search(query: String): List<SearchResponse> {
         val doc = app.get("$mainUrl/browse?q=$query").document
         val sss = doc.select("ul.ListAnimes article").map { ll ->
@@ -140,17 +141,14 @@ class AnimeflvnetProvider : MainAPI() {
                 data.split("],").forEach {
 
                     val epNum = it.removePrefix("[").substringBefore(",")
-                    // val epthumbid = it.removePrefix("[").substringAfter(",").substringBefore("]")
                     val animeid = doc.selectFirst("div.Strs.RateIt")?.attr("data-id")
-                    //val epthumb = "https://cdn.animeflv.net/screenshots/$animeid/$epNum/th_3.jpg"
                     val link = url.replace("/anime/", "/ver/") + "-$epNum"
+                    
+                    // ¡AQUÍ ESTÁ LA MAGIA NUEVA!
                     episodes.add(
-                        newEpisode(
-                            link,
-                            null,
-                            //posterUrl = epthumb,
-                            episode = epNum.toIntOrNull()
-                        )
+                        newEpisode(link) {
+                            this.episode = epNum.toIntOrNull()
+                        }
                     )
                 }
             }
@@ -172,7 +170,6 @@ class AnimeflvnetProvider : MainAPI() {
     data class Sub(
             val code: String,
     )
-
 
     override suspend fun loadLinks(
         data: String,
