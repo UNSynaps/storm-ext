@@ -35,7 +35,7 @@ class AnimeflvnetProvider : MainAPI() {
         TvType.Anime,
     )
 
-    override suspend fun getMainPage(page: Int, request : MainPageRequest): HomePageResponse {
+    override suspend fun getMainPage(page: Int, request : MainPageRequest): newHomePageResponse {
         val urls = listOf(
             Pair("$mainUrl/browse?type[]=movie&order=updated", "Películas"),
             Pair("$mainUrl/browse?status[]=2&order=default", "Animes"),
@@ -61,7 +61,7 @@ class AnimeflvnetProvider : MainAPI() {
                 }, isHorizontal)
         )
 
-        urls.apmap { (url, name) ->
+        urls.amap { (url, name) ->
             val doc = app.get(url).document
             val home = doc.select("ul.ListAnimes li article").mapNotNull {
                 val title = it.selectFirst("h3.Title")?.text() ?: return@mapNotNull null
@@ -78,7 +78,7 @@ class AnimeflvnetProvider : MainAPI() {
             items.add(HomePageList(name, home))
         }
         if (items.size <= 0) throw ErrorLoadingException()
-        return HomePageResponse(items)
+        return newHomePageResponse(items)
     }
 
     data class SearchObject(
@@ -145,7 +145,7 @@ class AnimeflvnetProvider : MainAPI() {
                     //val epthumb = "https://cdn.animeflv.net/screenshots/$animeid/$epNum/th_3.jpg"
                     val link = url.replace("/anime/", "/ver/") + "-$epNum"
                     episodes.add(
-                        Episode(
+                        newEpisode(
                             link,
                             null,
                             //posterUrl = epthumb,
@@ -180,14 +180,14 @@ class AnimeflvnetProvider : MainAPI() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ): Boolean {
-        app.get(data).document.select("script").apmap { script ->
+        app.get(data).document.select("script").amap { script ->
             if (script.data().contains("var videos = {") || script.data()
                     .contains("var anime_id =") || script.data().contains("server")
             ) {
                 val serversRegex = Regex("var videos = (\\{\"SUB\":\\[\\{.*?\\}\\]\\});")
                 val serversplain = serversRegex.find(script.data())?.destructured?.component1() ?: ""
                 val json = parseJson<MainServers>(serversplain)
-                json.sub.apmap {
+                json.sub.amap {
                     val code = it.code
                     loadExtractor(code, data, subtitleCallback, callback)
                 }
