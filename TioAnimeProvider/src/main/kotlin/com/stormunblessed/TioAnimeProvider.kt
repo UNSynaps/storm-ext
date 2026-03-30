@@ -56,7 +56,7 @@ class TioAnimeProvider:MainAPI() {
                     }
                 })
         )
-        urls.apmap { (url, name) ->
+        urls.amap { (url, name) ->
             val doc = app.get(url).document
             val home = doc.select("ul.animes li article").map {
                 val title = it.selectFirst("h3.title")?.text()
@@ -75,7 +75,7 @@ class TioAnimeProvider:MainAPI() {
             items.add(HomePageList(name, home))
         }
         if (items.size <= 0) throw ErrorLoadingException()
-        return HomePageResponse(items)
+        return newHomePageResponse(items)
     }
 
     data class SearchObject (
@@ -129,7 +129,7 @@ class TioAnimeProvider:MainAPI() {
                 data.split("],").forEach {
                     it.split(",").forEach { epNum ->
                         val link = url.replace("/anime/","/ver/")+"-$epNum"
-                        episodes.add( Episode(
+                        episodes.add( newEpisode(
                             link,
                             "Capítulo $epNum",
                             posterUrl = null,
@@ -155,13 +155,13 @@ class TioAnimeProvider:MainAPI() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ): Boolean {
-        app.get(data).document.select("script").apmap { script ->
+        app.get(data).document.select("script").amap { script ->
             if (script.data().contains("var videos =") || script.data().contains("var anime_id =") || script.data().contains("server")) {
                 val videos = script.data().replace("\\/", "/")
                 fetchUrls(videos).map {
                     it.replace("https://embedsb.com/e/","https://watchsb.com/e/")
                         .replace("https://ok.ru","http://ok.ru")
-                }.toList().apmap {
+                }.toList().amap {
                     loadExtractor(it, subtitleCallback, callback)
                 }
             }
