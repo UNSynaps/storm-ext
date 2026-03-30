@@ -24,8 +24,3 @@ cloudstream {
 
     iconUrl = "https://www.google.com/s2/favicons?domain=animeflv.net&sz=%size%"
 }
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile> {
-    compilerOptions {
-        freeCompilerArgs.add("-Xsuppress-warnings")
-    }
-}
