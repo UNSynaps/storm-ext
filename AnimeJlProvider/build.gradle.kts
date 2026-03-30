@@ -24,8 +24,3 @@ cloudstream {
 
     iconUrl = "https://www.anime-jl.net/favicon.ico"
 }
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile> {
-    compilerOptions {
-        freeCompilerArgs.add("-Xsuppress-warnings")
-    }
-}
