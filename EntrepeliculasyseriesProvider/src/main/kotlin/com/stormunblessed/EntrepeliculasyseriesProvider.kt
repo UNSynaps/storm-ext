@@ -122,7 +122,7 @@ class EntrepeliculasyseriesProvider : MainAPI() {
             val isValid = seasonid.size == 2
             val episode = if (isValid) seasonid.getOrNull(1) else null
             val season = if (isValid) seasonid.getOrNull(0) else null
-            Episode(
+            newEpisode(
                 href,
                 null,
                 season,
@@ -158,7 +158,7 @@ class EntrepeliculasyseriesProvider : MainAPI() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ): Boolean {
-        app.get(data).document.select(".video ul.dropdown-menu li").apmap {
+        app.get(data).document.select(".video ul.dropdown-menu li").amap {
             val servers = it.attr("data-link")
             val keys = servers.substringAfter("player.php?h=")
             val requestserrvers = app.post("https://entrepeliculasyseries.nz/r.php", allowRedirects = false,
