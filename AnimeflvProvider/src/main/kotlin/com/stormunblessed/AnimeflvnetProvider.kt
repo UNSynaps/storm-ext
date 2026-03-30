@@ -35,7 +35,7 @@ class AnimeflvnetProvider : MainAPI() {
         TvType.Anime,
     )
 
-    override suspend fun getMainPage(page: Int, request : MainPageRequest): newHomePageResponse {
+    override suspend fun getMainPage(page: Int, request : MainPageRequest): HomePageResponse {
         val urls = listOf(
             Pair("$mainUrl/browse?type[]=movie&order=updated", "Películas"),
             Pair("$mainUrl/browse?status[]=2&order=default", "Animes"),
