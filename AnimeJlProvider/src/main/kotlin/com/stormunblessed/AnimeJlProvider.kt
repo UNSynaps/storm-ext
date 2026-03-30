@@ -18,7 +18,7 @@ class AnimeJlProvider : MainAPI() {
         TvType.Anime,
     )
 
-    override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse? {
+    override suspend fun getMainPage(page: Int, request: MainPageRequest): newHomePageResponse? {
         val items = ArrayList<HomePageList>()
         val urls = listOf(
             Pair("Latino", "$mainUrl/animes?genre[]=46&order=updated"),
@@ -27,7 +27,7 @@ class AnimeJlProvider : MainAPI() {
             Pair("Peliculas", "$mainUrl/animes?tipo[]=3&order=updated"),
         )
 
-        urls.apmap { (name, url) ->
+        urls.amap { (name, url) ->
             val doc = app.get(url).document
             val home = doc.select("ul.ListAnimes li").map {
                 val title = it.selectFirst("article.Anime h3.Title")?.text()
@@ -44,7 +44,7 @@ class AnimeJlProvider : MainAPI() {
             }
             items.add(HomePageList(name, home))
         }
-        return HomePageResponse(items)
+        return newHomePageResponse(items)
     }
 
     override suspend fun search(query: String): List<SearchResponse> {
@@ -99,7 +99,7 @@ class AnimeJlProvider : MainAPI() {
                     }
                 }
                 episodes.add(
-                    Episode(
+                    newEpisode(
                         epurl,
                         epTitle,
                         0,
@@ -130,7 +130,7 @@ class AnimeJlProvider : MainAPI() {
         val regex = """(<iframe src=)"(.*?)"""".toRegex()
         app.get(data).document.select("script")
             .firstOrNull { it.html().contains("var video = [];") }?.let { frameUrl ->
-            regex.findAll(frameUrl.html()).map { it.groupValues.get(2) }.toList().apmap {
+            regex.findAll(frameUrl.html()).map { it.groupValues.get(2) }.toList().amap {
                 loadExtractor(it, data, subtitleCallback, callback)
             }
         }
