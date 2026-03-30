@@ -23,3 +23,8 @@ cloudstream {
 
     iconUrl = "https://www.cablevisionhd.com/imge/cablevisionhd.png"
 }
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile> {
+    compilerOptions {
+        freeCompilerArgs.add("-Xsuppress-warnings")
+    }
+}
