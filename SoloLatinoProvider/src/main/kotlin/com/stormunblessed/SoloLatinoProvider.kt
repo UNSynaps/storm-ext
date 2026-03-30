@@ -29,7 +29,7 @@ class SoloLatinoProvider : MainAPI() {
             Pair("Cartoons", "$mainUrl/genre_series/toons"),
         )
 
-        urls.apmap { (name, url) ->
+        urls.amap { (name, url) ->
             val tvType = when (name) {
                 "Peliculas" -> TvType.Movie
                 "Series" -> TvType.TvSeries
@@ -52,7 +52,7 @@ class SoloLatinoProvider : MainAPI() {
             }
             items.add(HomePageList(name, home))
         }
-        return HomePageResponse(items)
+        return newHomePageResponse(items)
     }
 
     override suspend fun search(query: String): List<SearchResponse> {
@@ -100,7 +100,7 @@ class SoloLatinoProvider : MainAPI() {
                             it.trim().toIntOrNull()
                         }
                     val realimg = it.selectFirst("div.imagen img")?.attr("src")
-                    Episode(
+                    newEpisode(
                         epurl,
                         epTitle,
                         seasonEpisodeNumber?.getOrNull(0),
@@ -145,7 +145,7 @@ class SoloLatinoProvider : MainAPI() {
     ): Boolean {
         val regex = """(go_to_player|go_to_playerVast)\('(.*?)'""".toRegex()
         app.get(data).document.selectFirst("iframe")?.attr("src")?.let { frameUrl ->
-            regex.findAll(app.get(frameUrl).document.html()).map { it.groupValues.get(2) }.toList().apmap {
+            regex.findAll(app.get(frameUrl).document.html()).map { it.groupValues.get(2) }.toList().amap {
                 loadExtractor(it, data, subtitleCallback, callback)
             }
         }
