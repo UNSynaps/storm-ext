@@ -18,7 +18,7 @@ class AnimeJlProvider : MainAPI() {
         TvType.Anime,
     )
 
-    override suspend fun getMainPage(page: Int, request: MainPageRequest): newHomePageResponse? {
+    override suspend fun getMainPage(page: Int, request: MainPageRequest): HomePageResponse? {
         val items = ArrayList<HomePageList>()
         val urls = listOf(
             Pair("Latino", "$mainUrl/animes?genre[]=46&order=updated"),
