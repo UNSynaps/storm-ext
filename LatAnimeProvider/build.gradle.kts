@@ -24,8 +24,3 @@ cloudstream {
 
     iconUrl = "https://latanime.org/public/img/logito.png"
 }
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile> {
-    compilerOptions {
-        freeCompilerArgs.add("-Xsuppress-warnings")
-    }
-}
