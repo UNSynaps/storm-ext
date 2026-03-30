@@ -33,7 +33,7 @@ class LACartoonsProvider:MainAPI() {
         val soup = app.get(mainUrl).document
         val home = soup.toSearchResult()
         items.add(HomePageList("Series", home))
-        return HomePageResponse(items)
+        return newHomePageResponse(items)
     }
     override suspend fun search(query: String): List<SearchResponse> {
         val doc = app.get("$mainUrl/?utf8=✓&Titulo=$query").document
@@ -53,7 +53,7 @@ class LACartoonsProvider:MainAPI() {
             val name = it.selectFirst("a")?.text()?.replace(regexep, "")?.replace("-","")
             val seasonnum = href?.substringAfter("t=")
             val epnum = regexep.find(name.toString())?.destructured?.component1()
-            Episode(
+            newEpisode(
                 fixUrl(href!!),
                 name,
                 seasonnum.toString().toIntOrNull(),
