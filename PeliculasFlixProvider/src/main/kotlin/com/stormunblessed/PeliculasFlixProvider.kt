@@ -105,7 +105,7 @@ class PeliculasFlixProvider:MainAPI() {
         }
         items.add(HomePageList("Peliculas", home!!))
         if (items.size <= 0) throw ErrorLoadingException()
-        return HomePageResponse(items)
+        return newHomePageResponse(items)
     }
 
     private fun tasa(
@@ -176,7 +176,7 @@ class PeliculasFlixProvider:MainAPI() {
         callback: (ExtractorLink) -> Unit
     ): Boolean {
         val daaa = parseJson<ArrayList<LinksOnline>>(data)
-        daaa.apmap {info ->
+        daaa.amap {info ->
             val link = info.link
             //println("LINK $link")
             if (link?.contains("player.html#") == true) {
