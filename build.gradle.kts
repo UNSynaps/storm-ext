@@ -55,17 +55,18 @@ subprojects {
             targetCompatibility = JavaVersion.VERSION_1_8
         }
 
-        tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile> {
-            compilerOptions {
-                jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_1_8)
-                freeCompilerArgs.addAll(
-                    "-Xno-call-assertions",
-                    "-Xno-param-assertions",
-                    "-Xno-receiver-assertions"
-                )
-            }
-        }
+            } // <- Esta es la llave mágica de seguridad
 
+    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile> {
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_1_8)
+            freeCompilerArgs.addAll(
+                "-Xno-call-assertions",
+                "-Xno-param-assertions",
+                "-Xno-receiver-assertions"
+            )
+        }
+    }
 
     dependencies {
         val apk by configurations
@@ -74,14 +75,11 @@ subprojects {
         // Stubs for all Cloudstream classes
         apk("com.lagradost:cloudstream3:pre-release")
 
-        // these dependencies can include any of those which are added by the app,
-        // but you dont need to include any of them if you dont need them
-        // https://github.com/recloudstream/cloudstream/blob/master/app/build.gradle
-        implementation(kotlin("stdlib")) // adds standard kotlin features, like listOf, mapOf etc
-        implementation("com.github.Blatzar:NiceHttp:0.4.13") // http library
+        implementation(kotlin("stdlib")) 
+        implementation("com.github.Blatzar:NiceHttp:0.4.13") 
         implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.16.0")
-        implementation("org.jsoup:jsoup:1.18.3") // html parser
-        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.0") // delay()
+        implementation("org.jsoup:jsoup:1.18.3") 
+        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.0") 
 
         //run JS
         implementation("org.mozilla:rhino:1.7.14")
