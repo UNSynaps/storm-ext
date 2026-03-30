@@ -26,8 +26,3 @@ cloudstream {
 
     iconUrl = "https://sololatino.net/wp-content/uploads/2020/10/cropped-logo-final-192x192.png"
 }
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile> {
-    compilerOptions {
-        freeCompilerArgs.add("-Xsuppress-warnings")
-    }
-}
