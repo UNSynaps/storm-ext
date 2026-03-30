@@ -28,7 +28,7 @@ class Pelisplus4KProvider :MainAPI() {
             Pair("Animes", "$mainUrl/animes"),
         )
 
-        urls.apmap { (name, url) ->
+        urls.amap { (name, url) ->
             val doc = app.get(url).document
             val home = doc.select(".articlesList article").map {
                 val title = it.selectFirst("a h2")?.text()
@@ -44,7 +44,7 @@ class Pelisplus4KProvider :MainAPI() {
             }
             items.add(HomePageList(name, home))
         }
-        return HomePageResponse(items)
+        return newHomePageResponse(items)
     }
 
     override suspend fun search(query: String): List<SearchResponse> {
@@ -94,7 +94,7 @@ class Pelisplus4KProvider :MainAPI() {
                         val realimg = if (img == null) null else if (img.isEmpty() == true) null else "https://image.tmdb.org/t/p/w342${img.replace("\\/", "/")}"
                         val epurl = "$url/season/$seasonNum/episode/$epNum"
                         epi.add(
-                            Episode(
+                            newEpisode(
                                 epurl,
                                 epTitle,
                                 seasonNum,
@@ -136,7 +136,7 @@ class Pelisplus4KProvider :MainAPI() {
         callback: (ExtractorLink) -> Unit
     ): Boolean {
         val doc = app.get(data).document
-        doc.select("div ul.subselect li").apmap {
+        doc.select("div ul.subselect li").amap {
             val encodedOne = it.attr("data-server").toByteArray()
             val encodedTwo = base64Encode(encodedOne)
             val linkRegex = Regex("window\\.location\\.href\\s*=\\s*'(.*)'")
