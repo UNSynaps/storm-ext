@@ -45,7 +45,7 @@ class CuevanaProvider : MainAPI() {
                         )
                     })
         )
-        urls.apmap { (url, name) ->
+        urls.amap { (url, name) ->
             val soup = app.get(url).document
             val home = soup.select("section li.xxx.TPostMv").map {
                 val title = it.selectFirst("h2.Title")!!.text()
@@ -65,7 +65,7 @@ class CuevanaProvider : MainAPI() {
         }
 
         if (items.size <= 0) throw ErrorLoadingException()
-        return HomePageResponse(items)
+        return newHomePageResponse(items)
     }
 
     override suspend fun search(query: String): List<SearchResponse> {
@@ -124,7 +124,7 @@ class CuevanaProvider : MainAPI() {
             val isValid = seasonid.size == 2
             val episode = if (isValid) seasonid.getOrNull(1) else null
             val season = if (isValid) seasonid.getOrNull(0) else null
-            Episode(
+            newEpisode(
                 href,
                 null,
                 season,
