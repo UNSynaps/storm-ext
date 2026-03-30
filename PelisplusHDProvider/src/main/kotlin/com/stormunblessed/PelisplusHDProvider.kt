@@ -36,7 +36,7 @@ class PelisplusHDProvider:MainAPI() {
                 }
             ))
         }
-        return HomePageResponse(items)
+        return newHomePageResponse(items)
     }
     private fun Element.toSearchResult(): SearchResponse {
         val title = this.select(".listing-content p").text()
@@ -115,7 +115,7 @@ class PelisplusHDProvider:MainAPI() {
             val isValid = seasonid?.size == 2
             val episode = if (isValid) seasonid?.getOrNull(1) else null
             val season = if (isValid) seasonid?.getOrNull(0) else null
-            Episode(
+            newEpisode(
                 href!!,
                 name,
                 season,
@@ -173,9 +173,9 @@ class PelisplusHDProvider:MainAPI() {
                     .replace("https://api.mycdn.moe/furl.php?id=", "https://www.fembed.com/v/")
                     .replace("https://api.mycdn.moe/sblink.php?id=", "https://streamsb.net/e/")
             )
-                .apmap { link ->
+                .amap { link ->
                     val regex = """(go_to_player|go_to_playerVast)\('(.*?)'""".toRegex()
-                    regex.findAll(app.get(link).document.html()).toList().apmap {
+                    regex.findAll(app.get(link).document.html()).toList().amap {
                         val current = it?.groupValues?.get(2) ?: ""
                         var link: String? = null
                         if (URLUtil.isValidUrl(current)) {
@@ -196,7 +196,7 @@ class PelisplusHDProvider:MainAPI() {
                                 )
                             ) {
                                 val doc = app.get(link).document
-                                doc.select("div.ODDIV li").apmap {
+                                doc.select("div.ODDIV li").amap {
                                     val linkencoded = it.attr("data-r")
                                     val linkdecoded = base64Decode(linkencoded)
                                         .replace(
