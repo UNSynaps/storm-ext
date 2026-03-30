@@ -75,7 +75,7 @@ class LatAnimeProvider : MainAPI() {
 //                        }, isHorizontal)
 //        )
 
-        urls.apmap { (url, name) ->
+        urls.amap { (url, name) ->
             val home = appGetChildMainUrl(url).document.select("html body div.container div.row div.col-md-4.col-lg-3.col-xl-2.col-6.my-3").map {
                 val title = it.selectFirst("div.col-md-4.col-lg-3.col-xl-2.col-6.my-3 a div.series div.seriedetails h3.my-1")!!.text()
                 val poster =
@@ -93,7 +93,7 @@ class LatAnimeProvider : MainAPI() {
         }
 
         if (items.size <= 0) throw ErrorLoadingException()
-        return HomePageResponse(items)
+        return newHomePageResponse(items)
     }
 
     override suspend fun search(query: String): List<SearchResponse> {
@@ -134,7 +134,7 @@ class LatAnimeProvider : MainAPI() {
             val link = it!!.attr("href")
             val epThumb = it.selectFirst(".animeimghv")?.attr("data-src")
                     ?: it.selectFirst("div.animeimgdiv img.animeimghv")?.attr("src")
-            Episode(link, name)
+            newEpisode(link, name)
         }
         return newAnimeLoadResponse(title, url, getType(title)) {
             posterUrl = poster
@@ -153,7 +153,7 @@ class LatAnimeProvider : MainAPI() {
             subtitleCallback: (SubtitleFile) -> Unit,
             callback: (ExtractorLink) -> Unit
     ): Boolean {
-        appGetChildMainUrl(data).document.select("div.container-fluid div.row div.col-md-12.col-lg-8.seiya ul.cap_repro.d-flex.flex-wrap li#play-video").apmap {
+        appGetChildMainUrl(data).document.select("div.container-fluid div.row div.col-md-12.col-lg-8.seiya ul.cap_repro.d-flex.flex-wrap li#play-video").amap {
             val encodedurl = it.select("a").attr("data-player")
             val urlDecoded = base64Decode(encodedurl)
             val url = (urlDecoded).replace("https://monoschinos2.com/reproductor?url=", "")
