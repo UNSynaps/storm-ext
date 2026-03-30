@@ -22,7 +22,7 @@ class AnimeflvIOProvider:MainAPI() {
         TvType.OVA,
         TvType.Anime,
     )
-    override suspend fun getMainPage(page: Int, request : MainPageRequest): HomePageResponse {
+    override suspend fun getMainPage(page: Int, request : MainPageRequest): newHomePageResponse {
         val items = ArrayList<HomePageList>()
         val urls = listOf(
             Pair("$mainUrl/series", "Series actualizadas",),
@@ -40,7 +40,7 @@ class AnimeflvIOProvider:MainAPI() {
                 EnumSet.of(DubStatus.Subbed),
             )
         }))
-        urls.apmap { (url, name) ->
+        urls.amap { (url, name) ->
             val soup = app.get(url).document
             val home = soup.select("div.item-pelicula").map {
                 val title = it.selectFirst(".item-detail p")?.text() ?: ""
@@ -60,7 +60,7 @@ class AnimeflvIOProvider:MainAPI() {
         }
 
         if (items.size <= 0) throw ErrorLoadingException()
-        return HomePageResponse(items)
+        return newHomePageResponse(items)
     }
 
     override suspend fun search(query: String): List<SearchResponse> {
@@ -116,7 +116,7 @@ class AnimeflvIOProvider:MainAPI() {
         val episodes = soup.select(".item-season-episodes a").map { li ->
             val href = fixUrl(li.selectFirst("a")?.attr("href") ?: "")
             val name = li.selectFirst("a")?.text() ?: ""
-            Episode(
+            newEpisode(
                 href, name,
             )
         }.reversed()
@@ -183,7 +183,7 @@ class AnimeflvIOProvider:MainAPI() {
         subtitleCallback: (SubtitleFile) -> Unit,
         callback: (ExtractorLink) -> Unit
     ): Boolean {
-        app.get(data).document.select("li.tab-video").apmap {
+        app.get(data).document.select("li.tab-video").amap {
             val url = fixUrl(it.attr("data-video"))
             if (url.contains("animeid")) {
                 val ajaxurl = url.replace("streaming.php","ajax.php")
@@ -196,7 +196,7 @@ class AnimeflvIOProvider:MainAPI() {
                             source.file,
                             "https://animeid.to",
                             headers = mapOf("Referer" to "https://animeid.to")
-                        ).apmap {
+                        ).amap {
                             callback(
                                 ExtractorLink(
                                     "Animeflv.io",
