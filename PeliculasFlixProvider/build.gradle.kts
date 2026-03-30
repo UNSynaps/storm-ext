@@ -23,3 +23,8 @@ cloudstream {
 
     iconUrl = "https://peliculasflix.co/img/logo.png"
 }
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile> {
+    compilerOptions {
+        freeCompilerArgs.add("-Xsuppress-warnings")
+    }
+}
