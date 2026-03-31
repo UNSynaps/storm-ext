@@ -1,0 +1,8 @@
+{
+  "name": "UNSynaps Repo 30/03/2026",
+  "description": "Extensiones Cloudstream en español",
+  "manifestVersion": 1,
+  "pluginLists": [
+    "https://raw.githubusercontent.com/UNSynaps/storm-ext/builds/plugins.json?v=2"
+  ]
+}

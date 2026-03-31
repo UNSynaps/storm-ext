@@ -1,0 +1,40 @@
+[
+    {
+        "iconUrl": "https://www.google.com/s2/favicons?domain=animeflv.net&sz=%size%",
+        "apiVersion": 1,
+        "repositoryUrl": "https://github.com/UNSynaps/storm-ext",
+        "fileSize": 19636,
+        "status": 1,
+        "language": "es",
+        "authors": [
+            "UNSynaps"
+        ],
+        "tvTypes": [
+            "Anime",
+            "OVA"
+        ],
+        "version": 1,
+        "internalName": "AnimeflvProvider",
+        "url": "https://raw.githubusercontent.com/UNSynaps/storm-ext/builds/AnimeflvProvider.cs3",
+        "name": "AnimeflvProvider"
+    },
+    {
+        "iconUrl": "https://www.anime-jl.net/favicon.ico",
+        "apiVersion": 1,
+        "repositoryUrl": "https://github.com/UNSynaps/storm-ext",
+        "fileSize": 14469,
+        "status": 1,
+        "language": "es",
+        "authors": [
+            "misajimenezmx"
+        ],
+        "tvTypes": [
+            "Movie",
+            "Anime"
+        ],
+        "version": 1,
+        "internalName": "AnimeJlProvider",
+        "url": "https://raw.githubusercontent.com/UNSynaps/storm-ext/builds/AnimeJlProvider.cs3",
+        "name": "AnimeJlProvider"
+    }
+]
