@@ -4,3 +4,4 @@ rootProject.name = "CloudstreamPlugins"
 // Cuando reparemos otro (ej: Cinecalidad), simplemente añadiremos otra línea abajo.
 
 include(":AnimeflvProvider")
+include(":AnimeJlProvider")
