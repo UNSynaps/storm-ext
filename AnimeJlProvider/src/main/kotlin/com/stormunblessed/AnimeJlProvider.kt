@@ -29,18 +29,15 @@ class AnimeJlProvider : MainAPI() {
 
         urls.amap { (name, url) ->
             val doc = app.get(url).document
-            val home = doc.select("ul.ListAnimes li").map {
-                val title = it.selectFirst("article.Anime h3.Title")?.text()
-                val link = it.selectFirst("article.Anime a")?.attr("href")
+            val home = doc.select("ul.ListAnimes li").mapNotNull {
+                val title = it.selectFirst("article.Anime h3.Title")?.text() ?: return@mapNotNull null
+                val link = it.selectFirst("article.Anime a")?.attr("href") ?: return@mapNotNull null
                 val img = it.selectFirst("article.Anime a div.Image figure img")?.attr("src")
                     ?.replaceFirst("^/".toRegex(), "$mainUrl/")
-                TvSeriesSearchResponse(
-                    title!!,
-                    link!!,
-                    this.name,
-                    TvType.Anime,
-                    img,
-                )
+                
+                newAnimeSearchResponse(title, link) {
+                    this.posterUrl = img
+                }
             }
             items.add(HomePageList(name, home))
         }
@@ -50,29 +47,26 @@ class AnimeJlProvider : MainAPI() {
     override suspend fun search(query: String): List<SearchResponse> {
         val url = "$mainUrl/animes?q=$query"
         val doc = app.get(url).document
-        return doc.select("ul.ListAnimes li").map {
-            val title = it.selectFirst("article.Anime h3.Title")?.text()
-            val link = it.selectFirst("article.Anime a")?.attr("href")
+        return doc.select("ul.ListAnimes li").mapNotNull {
+            val title = it.selectFirst("article.Anime h3.Title")?.text() ?: return@mapNotNull null
+            val link = it.selectFirst("article.Anime a")?.attr("href") ?: return@mapNotNull null
             val img = it.selectFirst("article.Anime a div.Image figure img")?.attr("src")
                 ?.replaceFirst("^/".toRegex(), "$mainUrl/")
-            TvSeriesSearchResponse(
-                title!!,
-                link!!,
-                this.name,
-                TvType.Anime,
-                img,
-            )
+            
+            newAnimeSearchResponse(title, link) {
+                this.posterUrl = img
+            }
         }
     }
 
     override suspend fun load(url: String): LoadResponse? {
         val doc = app.get(url).document
         val title = doc.selectFirst("div.Ficha div.Container h1.Title")?.text() ?: ""
-        val backimage = doc.selectFirst("div.Ficha div.Bg")!!.attr("style")
-            .substringAfter("background-image:url(").substringBefore(")")
-        val poster = doc.selectFirst("div.Container div.Image figure img")!!.attr("src")
+        val backimage = doc.selectFirst("div.Ficha div.Bg")?.attr("style")
+            ?.substringAfter("background-image:url(")?.substringBefore(")")
+        val poster = doc.selectFirst("div.Container div.Image figure img")?.attr("src")
         val description =
-            doc.selectFirst("div.Container main.Main section.WdgtCn div.Description")!!.text()
+            doc.selectFirst("div.Container main.Main section.WdgtCn div.Description")?.text()
         val tags =
             doc.select("div.Container main.Main section.WdgtCn nav.Nvgnrs a").map { it.text() }
         val episodes = ArrayList<Episode>()
@@ -99,25 +93,21 @@ class AnimeJlProvider : MainAPI() {
                     }
                 }
                 episodes.add(
-                    newEpisode(
-                        epurl,
-                        epTitle,
-                        0,
-                        epNum,
-                        realimg,
-                    )
+                    newEpisode(epurl) {
+                        this.name = epTitle
+                        this.episode = epNum
+                        this.posterUrl = realimg
+                    }
                 )
             }
         }
 
-        return newTvSeriesLoadResponse(
-            title,
-            url, TvType.Anime, episodes,
-        ) {
+        return newAnimeLoadResponse(title, url, TvType.Anime) {
             this.posterUrl = poster
             this.backgroundPosterUrl = backimage
             this.plot = description
             this.tags = tags
+            addEpisodes(DubStatus.Subbed, episodes)
         }
     }
 
@@ -136,5 +126,4 @@ class AnimeJlProvider : MainAPI() {
         }
         return true
     }
-
 }
